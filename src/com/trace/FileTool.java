@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.util.ArrayList;
 
 public class FileTool {
 	public static final String iosOriginDir = "Tapatalk for  iPhone";
@@ -14,25 +15,51 @@ public class FileTool {
 	public static final String androidFileName = "strings.xml";
 	public static final String androidDestDir = "android";
 	
-	public static final String filepath = "D:\\配置文件backup\\tapatalk-all";
-	public static final String diliverFilepath = "D:\\配置文件backup\\newString";
+	public static final String filepath = "D:\\工具文件\\配置文件\\tapatalk-all";
+	public static final String diliverFilepath = "D:\\工具文件\\配置文件\\newString";
 	
-	public void deliverFile(String path) {
-		File file = new File(filepath);
-		String[] filelist = file.list();
-		for (int i = 0; i < filelist.length; i++) {
-			File readfile = new File(filepath + "\\" + filelist[i]);
-			if (readfile.isDirectory()) {
-				System.out.println("filename=" + readfile.getName());
-				String[] childFilelist = readfile.list();
-				for(int j=0; j<childFilelist.length; j++){
-					System.out.println("cfilename=" + childFilelist[j]);
-				}
+	public void deliverFile() {
+		LanguageConfigTool languageConfigTool = new LanguageConfigTool();
+		languageConfigTool.getConfigList();
+		ArrayList<LanguageBean> languageBeans = languageConfigTool
+				.getLanguageBeans();
+		for (int i = 0; i < languageBeans.size(); i++) {
+			LanguageBean languageBean = languageBeans.get(i);
+			String androidToFilePath = FileTool.diliverFilepath + "\\"
+					+ FileTool.androidDestDir + "\\"
+					+ languageBean.getLanguage();
+			String iosToFilePath = FileTool.diliverFilepath + "\\"
+					+ FileTool.iosDestDir + "\\" + languageBean.getLanguage();
+			File androidToFile = new File(androidToFilePath);
+			if (!androidToFile.exists()) {
+				androidToFile.mkdirs();
 			}
+
+			File iosToFile = new File(iosToFilePath);
+			if (!iosToFile.exists()) {
+				iosToFile.mkdirs();
+			}
+
+			String androidOriginalFileName = FileTool.filepath + "\\"
+					+ languageBean.getLanguage() + "\\"
+					+ FileTool.androidOriginDir + "\\"
+					+ FileTool.androidFileName;
+			String androidToFileName = androidToFilePath + "\\"
+					+ FileTool.androidFileName;
+
+			String iosOriginalFileName = FileTool.filepath + "\\"
+					+ languageBean.getLanguage() + "\\" + FileTool.iosOriginDir
+					+ "\\" + FileTool.iosFileName;
+			String iosToFileName = iosToFilePath + "\\" + FileTool.iosFileName;
+
+			copyFile(androidOriginalFileName, androidToFileName);
+			copyFile(iosOriginalFileName, iosToFileName);
 		}
 	}
 	
 	public void copyFile(String oldPath, String newPath) {
+		File toFile = new File(newPath);
+		File path = new File(toFile.getPath());
 		try {
 			int bytesum = 0;
 			int byteread = 0;
@@ -44,7 +71,7 @@ public class FileTool {
 				int length;
 				while ((byteread = inStream.read(buffer)) != -1) {
 					bytesum += byteread;
-					System.out.println(bytesum);
+					// System.out.println(bytesum);
 					fs.write(buffer, 0, byteread);
 				}
 				inStream.close();
@@ -53,5 +80,5 @@ public class FileTool {
 			System.out.println("error  ");
 			e.printStackTrace();
 		}
-	}  
+	} 
 }
