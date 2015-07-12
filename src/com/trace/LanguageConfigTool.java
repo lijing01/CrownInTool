@@ -53,7 +53,8 @@ public class LanguageConfigTool {
 	}
 	
 	private String getConfigString(){
-		String fileName = "D:\\Code\\Eclipse\\CrownInTool\\config.json";
+		String fileName = FileTool.getJarRootPath()+"\\config.json";
+		System.out.println(fileName);
 		File file = new File(fileName);
 		BufferedReader reader = null;
 		try {
